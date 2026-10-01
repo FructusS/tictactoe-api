@@ -16,6 +16,6 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
   <ItemGroup>
-    <Protobuf Include="Protos\Room.proto" />
+    <ProjectReference Include="..\TicTacToe.Protos\TicTacToe.Protos.csproj" />
   </ItemGroup>
 </Project>
