@@ -2,10 +2,13 @@
 {
     public class Game
     {
-        public Piece[,] Field { get; set; }
-        public string CurrentPlayer { get; private set; }
+        public Piece[,] Field { get; private set; }
 
-        public GameStatus GameStatus { get; private set; }
+        public List<Guid> Players { get; private set; } = [];
+        
+        public Guid CurrentPlayer { get; set; }
+
+        public GameStatus Status { get; set; }
 
         public Game()
         {
@@ -14,17 +17,23 @@
 
         public void SetCurrentPlayer(string connectionId)
         {
-            CurrentPlayer = connectionId;
+            //CurrentPlayer = connectionId;
         }
 
-        public void MakeMove(int x, int y, Piece piece)
+        public bool MakeMove(int x, int y, Piece piece)
         {
-            Field[x,y] = piece;
+            
+            if (Field[x, y] == Piece.Empty)
+            {
+                Field[x, y] = piece;
+                return true;
+            }
+            return false;
         }
 
         public void SetGameStatus(GameStatus gameStatus)
         {
-            GameStatus = gameStatus;
+            Status = gameStatus;
         }
     }
 }
