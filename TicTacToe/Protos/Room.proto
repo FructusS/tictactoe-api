@@ -1,0 +1,22 @@
+﻿syntax = "proto3";
+
+service RoomService {
+  rpc CreateRoom (CreateRoomRequest) returns (CreateRoomReply);
+  rpc JoinRoom (JoinUserRequest) returns (JoinUserReply);
+}
+message CreateRoomRequest {
+  string roomName = 1;
+}
+
+message CreateRoomReply {
+  string roomId = 1;
+}
+
+message JoinUserRequest {
+  string roomId = 1;
+  optional string userName = 2;
+}
+
+message JoinUserReply {
+  string guid = 1;
+}
