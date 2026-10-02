@@ -1,3 +1,4 @@
+using TicTacToe;
 using TicTacToe.Services;
 using GameService = TicTacToe.GrpcServices.GameService;
 using RoomService = TicTacToe.GrpcServices.RoomService;
@@ -9,6 +10,7 @@ builder.Services.AddGrpc();
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<RoomManager>();
 builder.Services.AddSingleton<RoomStore>();
 var app = builder.Build();
 
