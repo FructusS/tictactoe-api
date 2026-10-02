@@ -10,49 +10,22 @@ using RoomService = TicTacToe.Services.RoomService;
 namespace TicTacToe.Tests;
 
 [TestFixture]
-public class RoomTest
+public class RoomTest : GrpcIntegrationTestBase
 {
-    private GrpcChannel channel = null!;
     private Protos.RoomService.RoomServiceClient client = null!;
-    private WebApplicationFactory<Program> factory = null!;
     private Guid currentRoom;
 
-    [OneTimeSetUp]
-    public void StartApplication()
-    {
-        factory = new WebApplicationFactory<Program>();
-        var handler = factory.Server.CreateHandler();
-
-        channel = GrpcChannel.ForAddress(
-            "http://localhost",
-            new GrpcChannelOptions
-            {
-                HttpHandler = handler
-            });
-
-        client = new Protos.RoomService.RoomServiceClient(channel);
-    }
-
-    [SetUp]
-    public async Task SetUp()
+    protected override async Task ResetStateAsync()
     {
         currentRoom = await CreateRoomAsync();
     }
     
-    [Test]
-    public async Task CreateRoomTest()
+    [OneTimeSetUp]
+    public void StartClient()
     {
-        var request = new CreateRoomRequest();
-        var response = await client.CreateRoomAsync(request);
-        Assert.NotNull(response);
-
-
-        Assert.DoesNotThrow(() => { _ = new Guid(response.RoomId.ToByteArray()); });
-        var id = new Guid(response.RoomId.ToByteArray());
-
-        Assert.That(id, Is.Not.EqualTo(Guid.Empty));
+        client = new Protos.RoomService.RoomServiceClient(channel);
     }
-
+    
     [Test]
     public async Task JoinRoomOnePlayerTest()
     {
@@ -101,14 +74,7 @@ public class RoomTest
         });
     }
 
-    [OneTimeTearDown]
-    public void TearDown()
-    {
-        channel.Dispose();
-        factory.Dispose();
-    }
-
-    public async Task<Guid> CreateRoomAsync()
+    private async Task<Guid> CreateRoomAsync()
     {
         var request = new CreateRoomRequest();
         var room = await client.CreateRoomAsync(request);
