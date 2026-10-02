@@ -8,67 +8,58 @@ namespace TicTacToe.Services;
 
 public class RoomService : Protos.RoomService.RoomServiceBase
 {
-    private readonly List<Room> rooms = [];
-    private static readonly SemaphoreSlim semaphore = new(1, 1);
+    private readonly RoomStore store;
+
+    public RoomService(RoomStore store)
+    {
+        this.store = store;
+    }
     
     public override async Task<CreateRoomReply> CreateRoom(CreateRoomRequest request, ServerCallContext context)
     {
-        await semaphore.WaitAsync();
-        try
+        var id = Guid.NewGuid();
+        var game = new Game()
         {
-            var id = Guid.NewGuid();
-            var game = new Game()
-            {
-                Status = GameStatus.WaitingPlayer
-            };
-            var room = new Room(id, game);
-            rooms.Add(room);
+            Status = GameStatus.WaitingPlayer
+        };
+        var room = new Room(id, game);
+        
+        store.Rooms.TryAdd(id, room);
 
-            return new CreateRoomReply
-            {
-                RoomId = ByteString.CopyFrom(id.ToByteArray())
-            };
-        }
-        finally
+        return new CreateRoomReply
         {
-            semaphore.Release();
-        }
+            RoomId = ByteString.CopyFrom(id.ToByteArray())
+        };
     }
 
     public override async Task<JoinUserReply> JoinRoom(JoinUserRequest request, ServerCallContext context)
     {
-        await semaphore.WaitAsync();
-        try
+        var guid = new Guid(request.RoomId.ToByteArray());
+        
+        if (!store.Rooms.TryGetValue(guid, out var currentRoom))
         {
-            var guid = new Guid(request.RoomId.ToByteArray());
-            var currentRoom = rooms.FirstOrDefault(x => x.Id == guid);
-            if (currentRoom == null)
-            {
-                throw new RpcException(new Status(StatusCode.NotFound, "Room not found"));
-            }
-
-            var playerId = new Guid();
-            switch (currentRoom.Game.Players.Count)
-            {
-                case > 2:
-                    throw new  RpcException(new Status(StatusCode.AlreadyExists, "You cannot join more than two player"));
-                case > 1:
-                    currentRoom.Game.Players.Add(playerId);
-                    currentRoom.Game.Status = GameStatus.TurnX;
-                    break;
-                default:
-                    currentRoom.Game.Players.Add(playerId);
-                    break;
-            }
-
-            return new JoinUserReply()
-            {
-                UserId = ByteString.CopyFrom(playerId.ToByteArray())
-            };
+            throw new RpcException(new Status(StatusCode.NotFound, "Room not found"));
         }
-        finally
+
+        if (currentRoom.Game.Players.Count >= 2)
         {
-            semaphore.Release();
+            throw new RpcException(
+                new Status(
+                    StatusCode.FailedPrecondition,
+                    "Room is full"));
         }
+
+        var playerId = Guid.NewGuid();
+
+        currentRoom.Game.Players.Add(playerId);
+
+        if (currentRoom.Game.Players.Count == 2)
+        {
+            currentRoom.Game.Status = GameStatus.TurnX;
+        }
+        return new JoinUserReply()
+        {
+            UserId = ByteString.CopyFrom(playerId.ToByteArray())
+        };
     }
 }
