@@ -1,4 +1,6 @@
-﻿namespace TicTacToe.Models
+﻿using TicTacToe.Protos;
+
+namespace TicTacToe.Models
 {
     public class Game
     {
@@ -22,7 +24,6 @@
 
         public bool MakeMove(int x, int y, Piece piece)
         {
-            
             if (Field[x, y] == Piece.Empty)
             {
                 Field[x, y] = piece;
