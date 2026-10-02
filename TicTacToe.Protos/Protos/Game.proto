@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "TicTacToe.Protos";
+
+package TicTacToe.Protos;
+
+service GameService {
+  rpc MakeMove (stream MakeMoveRequest) returns (stream MakeMoveReply);
+}
+
+enum Piece {
+  Empty = 0;
+  X = 1;
+  O = 2;
+}
+
+message MakeMoveRequest {
+  Piece piece = 1;
+  int32 x = 2;
+  int32 y = 3;
+  
+}
+message MakeMoveReply {
+  
+}

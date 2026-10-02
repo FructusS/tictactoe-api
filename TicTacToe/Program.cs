@@ -1,6 +1,6 @@
-using TicTacToe.Hubs;
-using TicTacToe.Models;
 using TicTacToe.Services;
+using GameService = TicTacToe.GrpcServices.GameService;
+using RoomService = TicTacToe.GrpcServices.RoomService;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
@@ -19,6 +19,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGrpcService<RoomService>();
+app.MapGrpcService<GameService>();
 
 app.MapGet("/room", () => Results.Ok(Guid.NewGuid()));
 //

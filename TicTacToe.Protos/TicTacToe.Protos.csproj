@@ -17,6 +17,9 @@
       <Protobuf Include="Protos\Room.proto">
         <Generator>MSBuild:Compile</Generator>
       </Protobuf>
+        <Protobuf Include="Protos\Game.proto">
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
     </ItemGroup>
 
 </Project>
