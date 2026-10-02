@@ -29,13 +29,11 @@ public class RoomTest : GrpcIntegrationTestBase
     [Test]
     public async Task JoinRoomOnePlayerTest()
     {
-        JoinUserReply? player1 = null;
         
-        await Assert.DoesNotThrowAsync(async () => { player1 = await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) }); });
+        var player1 = await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
 
         Assert.NotNull(player1);
 
-        Assert.DoesNotThrow(() => { _ = new Guid(player1.UserId.ToByteArray()); });
         var id = new Guid(player1.UserId.ToByteArray());
 
         Assert.That(id, Is.Not.EqualTo(Guid.Empty));
@@ -45,33 +43,36 @@ public class RoomTest : GrpcIntegrationTestBase
     public async Task JoinRoomTwoPlayerTest()
     {
         var player1 = await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
-        Assert.NotNull(player1);
 
-        Assert.DoesNotThrow(() => { _ = new Guid(player1.UserId.ToByteArray()); });
-        var id = new Guid(player1.UserId.ToByteArray());
+        var id1 = new Guid(player1.UserId.ToByteArray());
 
-        Assert.That(id, Is.Not.EqualTo(Guid.Empty));
         var player2 = await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
         
-        Assert.NotNull(player2);
+        var id2 = new Guid(player2.UserId.ToByteArray());
 
-        Assert.DoesNotThrow(() => { _ = new Guid(player2.UserId.ToByteArray()); });
-        id = new Guid(player2.UserId.ToByteArray());
-
-        Assert.That(id, Is.Not.EqualTo(Guid.Empty));
+        Assert.Multiple(() =>
+        {
+            Assert.That(id1, Is.Not.EqualTo(Guid.Empty));
+            Assert.That(id2, Is.Not.EqualTo(Guid.Empty));
+            Assert.That(id2, Is.Not.EqualTo(id1));
+        });
     }
 
 
     [Test]
     public async Task JoinRoomMoreTwoPlayerTest()
     {
-        _ = await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
-        _ = await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
+        await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
+        await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
 
-        await Assert.ThrowsAsync<RpcException>(async () =>
-        {
-            var player3 = await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
+        var ex = await Assert.ThrowsAsync<RpcException>(async () =>
+        { 
+            await client.JoinRoomAsync(new JoinUserRequest() { RoomId = ByteString.CopyFrom(currentRoom.ToByteArray()) });
         });
+        
+        Assert.That(
+            ex!.StatusCode,
+            Is.EqualTo(StatusCode.FailedPrecondition));
     }
 
     private async Task<Guid> CreateRoomAsync()
