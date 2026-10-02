@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 using NUnit.Framework;
 using TicTacToe.Protos;
-using RoomService = TicTacToe.Services.RoomService;
+using RoomService = TicTacToe.GrpcServices.RoomService;
 
 namespace TicTacToe.Tests;
 
