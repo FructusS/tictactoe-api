@@ -16,26 +16,26 @@ public class RoomService : Protos.RoomService.RoomServiceBase
         this.manager = manager;
     }
 
-    public override async Task<CreateRoomReply> CreateRoom(CreateRoomRequest request, ServerCallContext context)
+    public override Task<CreateRoomReply> CreateRoom(CreateRoomRequest request, ServerCallContext context)
     {
         var result = manager.CreateRoom();
-        return result.Match(
+        return Task.FromResult(result.Match(
             success => new CreateRoomReply
             {
                 RoomId = ByteString.CopyFrom(success.Id.ToByteArray())
             },
-            error => throw ErrorMapper.MapCreateRoomError(error));
+            error => throw ErrorMapper.MapCreateRoomError(error)));
     }
 
-    public override async Task<JoinUserReply> JoinRoom(JoinUserRequest request, ServerCallContext context)
+    public override Task<JoinUserReply> JoinRoom(JoinUserRequest request, ServerCallContext context)
     {
         var result = manager.JoinRoom(new Guid(request.RoomId.ToByteArray()));
-        return result.Match(
+        return Task.FromResult(result.Match(
             success => new JoinUserReply()
             {
                 UserId = ByteString.CopyFrom(success.ToByteArray())
             },
             error => throw ErrorMapper.MapJoinRoomError(error)
-        );
+        ));
     }
 }
