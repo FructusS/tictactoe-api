@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Google.Protobuf;
 using TicTacToe.Models;
 using TicTacToe.Protos;
 using TicTacToe.Services;
@@ -67,8 +68,26 @@ public class RoomManager
 
         var playerId = Guid.NewGuid();
 
-        room.Game.Players.Add(playerId);
+        var piece = (Piece)Random.Shared.Next(1, 2);
 
+        var pieceAlreadyExists = room.Game.Players.Any(x => x.SelectedPiece == piece);
+
+        if (pieceAlreadyExists)
+        {
+            piece = piece switch
+            {
+                Piece.X => Piece.O,
+                Piece.O => Piece.X,
+                _ => throw new ArgumentOutOfRangeException(nameof(piece), piece, "Invalid piece.")
+            };
+        }
+        
+        room.Game.Players.Add(new Player()
+        {
+            PlayerId = ByteString.CopyFrom(playerId.ToByteArray()),
+            SelectedPiece = piece
+        });
+        
         if (room.Game.Players.Count == 2)
         {
             room.Game.Status = GameStatus.TurnX;
