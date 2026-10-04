@@ -58,10 +58,6 @@ public class GameService : Protos.GameService.GameServiceBase
             Status = game.Status
         };
 
-        response.Players.AddRange(
-            game.Players.Select(
-                x => ByteString.CopyFrom(x.ToByteArray())));
-
         return response;
     }
 }
