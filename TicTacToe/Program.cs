@@ -22,6 +22,7 @@ builder.Services.AddGrpc();
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<GameSubscriptions>();
 builder.Services.AddSingleton<RoomManager>();
 builder.Services.AddSingleton<RoomStore>();
 var app = builder.Build();
