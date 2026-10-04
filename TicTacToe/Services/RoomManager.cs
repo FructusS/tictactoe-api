@@ -31,12 +31,12 @@ public class RoomManager
     { 
         try
         {
-            var id = Guid.NewGuid();
             var game = new Game()
             {
+                Id = Guid.NewGuid(),
                 Status = GameStatus.WaitingPlayer
             };
-            var room = new Room(id, game);
+            var room = new Room(Guid.NewGuid(), game);
 
             store.Add(room);
 
@@ -61,7 +61,7 @@ public class RoomManager
         {
             return Result.Failure(JoinRoomError.RoomNotFound);
         }
-        if (room.Game.Players.Count >= 2)
+        if (room.Players.Count >= 2)
         {
            return Result.Failure(JoinRoomError.RoomFull);
         }
@@ -70,7 +70,7 @@ public class RoomManager
 
         var piece = (Piece)Random.Shared.Next(1, 2);
 
-        var pieceAlreadyExists = room.Game.Players.Any(x => x.SelectedPiece == piece);
+        var pieceAlreadyExists = room.Players.Any(x => x.SelectedPiece == piece);
 
         if (pieceAlreadyExists)
         {
@@ -82,13 +82,13 @@ public class RoomManager
             };
         }
         
-        room.Game.Players.Add(new Player()
+        room.Players.Add(new Player()
         {
             PlayerId = ByteString.CopyFrom(playerId.ToByteArray()),
             SelectedPiece = piece
         });
         
-        if (room.Game.Players.Count == 2)
+        if (room.Players.Count == 2)
         {
             room.Game.Status = GameStatus.TurnX;
         }
