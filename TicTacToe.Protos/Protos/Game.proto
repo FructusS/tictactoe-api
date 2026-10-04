@@ -5,7 +5,22 @@ option csharp_namespace = "TicTacToe.Protos";
 package TicTacToe.Protos;
 
 service GameService {
-  rpc MakeMove (stream MakeMoveRequest) returns (stream MakeMoveReply);
+  rpc MakeMove (MakeMoveRequest) returns (MakeMoveReply);
+  rpc SubscribeGame(SubscribeGameRequest) returns (stream GameUpdate)
+}
+
+message GameUpdate {
+  // guid
+  bytes gameId = 1;
+  GameStatus status = 2;
+  bytes currentPlayer = 3;
+  // guid
+  repeated bytes players = 4;
+}
+
+message SubscribeGameRequest {
+  // guid
+  bytes gameId = 1;
 }
 
 enum Piece {
@@ -13,7 +28,14 @@ enum Piece {
   X = 1;
   O = 2;
 }
-
+enum GameStatus {
+  TurnX = 0;
+  TurnY = 1;
+  WaitingPlayer = 2;
+  GameWonX = 3;
+  GameWonY = 4;
+  GameDraw = 5;
+}
 message MakeMoveRequest {
   Piece piece = 1;
   int32 x = 2;
