@@ -9,6 +9,12 @@ service GameService {
   rpc SubscribeGame(SubscribeGameRequest) returns (stream GameUpdate)
 }
 
+message Player {
+  // guid
+  bytes playerId = 1;
+  Piece selectedPiece = 2;
+}
+
 message GameUpdate {
   // guid
   bytes gameId = 1;

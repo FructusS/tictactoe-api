@@ -6,9 +6,9 @@ namespace TicTacToe.Models
     {
         public Piece[,] Field { get; private set; }
 
-        public List<Guid> Players { get; private set; } = [];
+        public List<Player> Players { get; private set; } = [];
         
-        public Guid CurrentPlayer { get; set; }
+        public Player CurrentPlayer { get; set; }
 
         public GameStatus Status { get; set; }
 
