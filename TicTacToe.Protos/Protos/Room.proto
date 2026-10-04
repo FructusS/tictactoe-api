@@ -12,13 +12,17 @@ message CreateRoomRequest {
 }
 
 message CreateRoomReply {
+  //guid
   bytes roomId = 1;
 }
 
 message JoinUserRequest {
+  //guid
   bytes roomId = 1;
 }
 
 message JoinUserReply {
+  //guid
   bytes userId = 1;
 }
+
