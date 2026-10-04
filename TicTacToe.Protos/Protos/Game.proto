@@ -20,8 +20,6 @@ message GameUpdate {
   bytes gameId = 1;
   GameStatus status = 2;
   bytes currentPlayer = 3;
-  // guid
-  repeated bytes players = 4;
 }
 
 message SubscribeGameRequest {
@@ -35,12 +33,13 @@ enum Piece {
   O = 2;
 }
 enum GameStatus {
-  TurnX = 0;
-  TurnY = 1;
-  WaitingPlayer = 2;
-  GameWonX = 3;
-  GameWonY = 4;
-  GameDraw = 5;
+  Unspecified = 0;
+  TurnX = 1;
+  TurnO = 2;
+  WaitingForPlayers = 3;
+  WonX = 4;
+  WonO = 5;
+  Draw = 6;
 }
 message MakeMoveRequest {
   Piece piece = 1;
