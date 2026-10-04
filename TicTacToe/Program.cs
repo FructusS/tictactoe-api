@@ -1,9 +1,21 @@
+using Serilog;
 using TicTacToe;
 using TicTacToe.Services;
 using GameService = TicTacToe.GrpcServices.GameService;
 using RoomService = TicTacToe.GrpcServices.RoomService;
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
+Log.Information("Starting server.");
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSerilog((services, lc) => lc
+    .ReadFrom.Configuration(builder.Configuration)
+    .ReadFrom.Services(services));
+
 builder.Services.AddGrpc();
 
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using TicTacToe.Models;
+using TicTacToe.Protos;
 using TicTacToe.Services;
 
 namespace TicTacToe;
@@ -17,9 +18,11 @@ public enum CreateRoomError
 public class RoomManager
 {
     private readonly RoomStore store;
+    private readonly ILogger<RoomManager> logger;
 
-    public RoomManager(RoomStore store)
+    public RoomManager(ILogger<RoomManager> logger, RoomStore store)
     {
+        this.logger = logger;
         this.store = store;
     }
 
@@ -44,7 +47,7 @@ public class RoomManager
         }
         catch (Exception ex)
         {
-            // todo log here
+            logger.LogError(message: ex.Message, exception: ex);
             throw;
         }
     }
