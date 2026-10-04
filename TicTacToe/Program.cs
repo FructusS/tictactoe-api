@@ -35,21 +35,6 @@ if (app.Environment.IsDevelopment())
 app.MapGrpcService<RoomService>();
 app.MapGrpcService<GameService>();
 
-app.MapGet("/room", () => Results.Ok(Guid.NewGuid()));
-//
-// app.MapPost("/game", async () =>
-// {
-//     var game = new Game();
-//     return Results.Ok(game.Field);
-// });
-
-
-// app.UseCors(builder =>
-// {
-//     builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-// });
-
-// app.UseHttpsRedirection();
 
 
 app.Run();
