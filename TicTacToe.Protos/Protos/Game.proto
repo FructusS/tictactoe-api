@@ -6,7 +6,7 @@ package TicTacToe.Protos;
 
 service GameService {
   rpc MakeMove (MakeMoveRequest) returns (MakeMoveReply);
-  rpc SubscribeGame(SubscribeGameRequest) returns (stream GameUpdate)
+  rpc SubscribeGame(SubscribeGameRequest) returns (stream GameUpdate);
 }
 
 message Player {
