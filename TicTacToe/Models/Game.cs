@@ -4,6 +4,7 @@ namespace TicTacToe.Models
 {
     public class Game
     {
+        public Guid Id { get; set; }
         public Piece[,] Field { get; private set; }
 
         public List<Player> Players { get; private set; } = [];
